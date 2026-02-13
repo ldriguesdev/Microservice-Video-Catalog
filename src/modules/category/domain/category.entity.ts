@@ -42,7 +42,7 @@ export class Category {
   activate(): void {
     this.is_active = true
   }
-
+ 
   deactivate(): void {
     this.is_active = false
   }
