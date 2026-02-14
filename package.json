@@ -21,6 +21,7 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
+    "class-validator": "^0.14.3",
     "lodash": "^4.17.23",
     "uuid": "^13.0.0"
   }
