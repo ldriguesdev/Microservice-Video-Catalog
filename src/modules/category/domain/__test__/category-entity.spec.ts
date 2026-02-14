@@ -2,6 +2,11 @@ import { Uuid } from "../../../../shared/domain/value-object/uuid.value-object";
 import { Category } from "../category.entity";
 
 describe('Category Entity', () => {
+  let spy: any
+
+  beforeEach(() => {
+    spy = jest.spyOn(Category, 'validate')
+  })
   test('should create a category with valid parameters', () => {
     const category = new Category({
       name: 'Movies',
@@ -42,6 +47,8 @@ describe('Category Entity', () => {
     category.changeName('Audio');
 
     expect(category.name).toBe('Audio');
+    expect(spy).toHaveBeenCalledTimes(1)
+
   });
 
   test('should change the description of the category', () => {
@@ -52,6 +59,7 @@ describe('Category Entity', () => {
     category.changeDescription('All kinds of games');
 
     expect(category.description).toBe('All kinds of games');
+    expect(spy).toHaveBeenCalledTimes(1)
   });
 
   test('should activate the category', () => {
@@ -98,5 +106,53 @@ describe('Category Entity', () => {
       created_at: createdAt.toISOString(),
     });
   });
-
 });
+
+describe('Category validator', () => {
+
+  describe('name field', () => {
+
+    const arrange = [
+      {
+        label: 'null',
+        value: null,
+        expected: {
+          name: [
+            'name should not be empty',
+            'name must be a string',
+            'name must be shorter than or equal to 255 characters'
+          ]
+        }
+      },
+      {
+        label: 'empty',
+        value: '',
+        expected: {
+          name: [
+            'name should not be empty'
+          ]
+        }
+      },
+      {
+        label: 'longer than 255 characters',
+        value: 'a'.repeat(256),
+        expected: {
+          name: [
+            'name must be shorter than or equal to 255 characters'
+          ]
+        }
+      }
+    ]
+
+    for (const item of arrange) {
+      it(`should be invalid when name is ${item.label}`, () => {
+        // Arrange
+        const execute = () => Category.create({ name: item.value as any })
+
+        expect(execute).containsErrorMessage(item.expected)
+      })
+    }
+
+  })
+
+})
