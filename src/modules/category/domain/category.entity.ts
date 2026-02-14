@@ -1,5 +1,7 @@
+import { Entity } from "../../../shared/domain/entity"
 import { EntityValidationError } from "../../../shared/domain/validators/validation.error"
 import { Uuid } from "../../../shared/domain/value-object/uuid.value-object"
+import { ValueObject } from "../../../shared/domain/value-object/value-object"
 import { CategoryValidatorFactory } from "./category.validator"
 
 export type CategoryConstructorProps = {
@@ -16,7 +18,7 @@ export type CategoryCreateCommand = {
   is_active?: boolean
 }
 
-export class Category {
+export class Category implements Entity {
   category_id: Uuid
   name: string
   description: string | null
@@ -29,6 +31,10 @@ export class Category {
     this.description = props.description ?? null
     this.is_active = props.is_active ?? true
     this.created_at = props.created_at ?? new Date()
+  }
+
+  get entity_id(): ValueObject {
+    return this.category_id
   }
 
   static create(props: CategoryCreateCommand): Category {
