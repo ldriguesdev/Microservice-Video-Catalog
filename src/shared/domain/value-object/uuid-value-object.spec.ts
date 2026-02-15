@@ -1,4 +1,4 @@
-import { InvalidUuidError, Uuid } from "../value-object/uuid.value-object"
+import { InvalidUuidError, Uuid } from "./uuid.value-object"
 
 class TestUuid extends Uuid {}
 
