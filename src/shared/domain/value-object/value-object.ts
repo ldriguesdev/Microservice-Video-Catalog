@@ -1,15 +1,15 @@
-import isEqual from 'lodash/isEqual'
+import isEqual from "lodash/isEqual";
 
 export abstract class ValueObject {
   public equals(value: this): boolean {
     if (value === null || value === undefined) {
-      return false
+      return false;
     }
 
     if (value.constructor.name !== this.constructor.name) {
-      return false
+      return false;
     }
 
-    return isEqual(value, this)
+    return isEqual(value, this);
   }
 }
