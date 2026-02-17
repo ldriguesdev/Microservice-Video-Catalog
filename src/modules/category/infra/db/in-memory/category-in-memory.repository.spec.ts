@@ -1,7 +1,7 @@
+import { SearchParams } from "../../../../../shared/domain/repository/search-params";
+import { CategoryDataBuilder } from "../../../domain/category-data-builder";
+import { Category } from "../../../domain/category.entity";
 import { CategoryInMemoryRepository } from "./category-in-memory.repository";
-import { SearchParams } from "../../../../shared/domain/repository/search-params";
-import { CategoryDataBuilder } from "../../domain/category-data-builder";
-import { Category } from "../../domain/category.entity";
 
 describe("CategoryInMemoryRepository", () => {
   let repository: CategoryInMemoryRepository;
