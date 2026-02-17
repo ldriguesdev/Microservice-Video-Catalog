@@ -1,6 +1,7 @@
 import { CategoryInMemoryRepository } from "./category-in-memory.repository";
-import { Category } from "../../domain/category.entity";
 import { SearchParams } from "../../../../shared/domain/repository/search-params";
+import { CategoryDataBuilder } from "../../domain/category-data-builder";
+import { Category } from "../../domain/category.entity";
 
 describe("CategoryInMemoryRepository", () => {
   let repository: CategoryInMemoryRepository;
@@ -9,22 +10,21 @@ describe("CategoryInMemoryRepository", () => {
     repository = new CategoryInMemoryRepository();
   });
 
-  const createCategory = (name: string, createdAt?: Date) => {
-    return new Category({
-      name,
-      created_at: createdAt ?? new Date(),
-    });
-  };
   describe("sortableFields", () => {
     it("should define sortable fields correctly", () => {
       expect(repository.sortableFields).toStrictEqual(["name", "created_at"]);
     });
   });
+
+  describe("getEntity", () => {
+    it("should return Category entity", () => {
+      expect(repository.getEntity()).toBe(Category);
+    });
+  });
+
   describe("applyFilter", () => {
     it("should return all items when filter is null", async () => {
-      const items = [createCategory("Filmes"), createCategory("Séries")];
-
-      repository.items = items;
+      repository.items = CategoryDataBuilder.theCategories(2).build();
 
       const result = await repository.search(
         new SearchParams({ filter: null }),
@@ -33,14 +33,18 @@ describe("CategoryInMemoryRepository", () => {
       expect(result.items.length).toBe(2);
     });
 
-    it("should filter items case insensitive", async () => {
-      const items = [
-        createCategory("Filmes"),
-        createCategory("Séries"),
-        createCategory("Documentários"),
-      ];
+    it("should return all items when filter is empty string", async () => {
+      repository.items = CategoryDataBuilder.theCategories(2).build();
 
-      repository.items = items;
+      const result = await repository.search(new SearchParams({ filter: "" }));
+
+      expect(result.items.length).toBe(2);
+    });
+
+    it("should filter items case insensitive", async () => {
+      repository.items = CategoryDataBuilder.theCategories(3)
+        .withName((index) => ["Filmes", "Séries", "Documentários"][index])
+        .build();
 
       const result = await repository.search(
         new SearchParams({ filter: "fil" }),
@@ -51,7 +55,9 @@ describe("CategoryInMemoryRepository", () => {
     });
 
     it("should return empty when no match found", async () => {
-      repository.items = [createCategory("Filmes"), createCategory("Séries")];
+      repository.items = CategoryDataBuilder.theCategories(2)
+        .withName((index) => ["Filmes", "Séries"][index])
+        .build();
 
       const result = await repository.search(
         new SearchParams({ filter: "abc" }),
@@ -62,30 +68,26 @@ describe("CategoryInMemoryRepository", () => {
   });
 
   describe("applySort", () => {
-    it("should sort by created_at desc by default", async () => {
-      const items = [
-        createCategory("A", new Date(2020, 1, 1)),
-        createCategory("B", new Date(2022, 1, 1)),
-        createCategory("C", new Date(2021, 1, 1)),
-      ];
-
-      repository.items = items;
+    it("should sort by created_at desc by default when sort is null", async () => {
+      repository.items = CategoryDataBuilder.theCategories(3)
+        .withName((index) => ["A", "B", "C"][index])
+        .withCreatedAt(
+          (index) =>
+            [new Date(2020, 1, 1), new Date(2022, 1, 1), new Date(2021, 1, 1)][
+              index
+            ],
+        )
+        .build();
 
       const result = await repository.search(new SearchParams({}));
 
-      expect(result.items[0].name).toBe("B");
-      expect(result.items[1].name).toBe("C");
-      expect(result.items[2].name).toBe("A");
+      expect(result.items.map((i) => i.name)).toStrictEqual(["B", "C", "A"]);
     });
 
     it("should sort by name asc", async () => {
-      const items = [
-        createCategory("B"),
-        createCategory("A"),
-        createCategory("C"),
-      ];
-
-      repository.items = items;
+      repository.items = CategoryDataBuilder.theCategories(3)
+        .withName((index) => ["B", "A", "C"][index])
+        .build();
 
       const result = await repository.search(
         new SearchParams({
@@ -98,13 +100,9 @@ describe("CategoryInMemoryRepository", () => {
     });
 
     it("should sort by name desc", async () => {
-      const items = [
-        createCategory("B"),
-        createCategory("A"),
-        createCategory("C"),
-      ];
-
-      repository.items = items;
+      repository.items = CategoryDataBuilder.theCategories(3)
+        .withName((index) => ["B", "A", "C"][index])
+        .build();
 
       const result = await repository.search(
         new SearchParams({
@@ -115,18 +113,28 @@ describe("CategoryInMemoryRepository", () => {
 
       expect(result.items.map((i) => i.name)).toStrictEqual(["C", "B", "A"]);
     });
+
+    it("should ignore sort when field is not sortable", async () => {
+      repository.items = CategoryDataBuilder.theCategories(3)
+        .withName((index) => ["B", "A", "C"][index])
+        .build();
+
+      const result = await repository.search(
+        new SearchParams({
+          sort: "description", 
+          sort_dir: "asc",
+        }),
+      );
+
+      expect(result.items.length).toBe(3);
+    });
   });
 
   describe("pagination", () => {
     it("should paginate results correctly", async () => {
-      const items = [
-        createCategory("A"),
-        createCategory("B"),
-        createCategory("C"),
-        createCategory("D"),
-      ];
-
-      repository.items = items;
+      repository.items = CategoryDataBuilder.theCategories(4)
+        .withName((index) => ["A", "B", "C", "D"][index])
+        .build();
 
       const result = await repository.search(
         new SearchParams({
@@ -142,6 +150,7 @@ describe("CategoryInMemoryRepository", () => {
       expect(result.current_page).toBe(2);
       expect(result.per_page).toBe(2);
       expect(result.total).toBe(4);
+      expect(result.last_page).toBe(2);
     });
   });
 });

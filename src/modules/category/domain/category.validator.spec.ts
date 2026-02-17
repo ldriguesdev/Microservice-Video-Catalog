@@ -1,18 +1,18 @@
-import { Category } from "./category.entity";
 import {
   CategoryRules,
   CategoryValidator,
   CategoryValidatorFactory,
 } from "./category.validator";
+import { CategoryDataBuilder } from "./category-data-builder";
 
 describe("CategoryValidator Unit Tests", () => {
   describe("CategoryRules", () => {
     it("should assign properties correctly from Category", () => {
-      const category = new Category({
-        name: "Test",
-        description: "Desc",
-        is_active: true,
-      });
+      const category = CategoryDataBuilder.aCategory()
+        .withName("Test")
+        .withDescription("Desc")
+        .activate()
+        .build();
 
       const rules = new CategoryRules(category);
 
@@ -30,11 +30,7 @@ describe("CategoryValidator Unit Tests", () => {
     });
 
     it("should validate a valid category", () => {
-      const category = new Category({
-        name: "Valid Name",
-        description: "Valid Description",
-        is_active: true,
-      });
+      const category = CategoryDataBuilder.aCategory().build();
 
       const isValid = validator.validate(category);
 
@@ -43,11 +39,9 @@ describe("CategoryValidator Unit Tests", () => {
     });
 
     it("should invalidate when name is empty", () => {
-      const category = new Category({
-        name: "" as any,
-        description: "Desc",
-        is_active: true,
-      });
+      const category = CategoryDataBuilder.aCategory()
+        .withName("" as any)
+        .build();
 
       const isValid = validator.validate(category);
 
@@ -56,11 +50,9 @@ describe("CategoryValidator Unit Tests", () => {
     });
 
     it("should invalidate when name is longer than 255 characters", () => {
-      const category = new Category({
-        name: "a".repeat(256),
-        description: "Desc",
-        is_active: true,
-      });
+      const category = CategoryDataBuilder.aCategory()
+        .withInvalidNameTooLong()
+        .build();
 
       const isValid = validator.validate(category);
 
@@ -71,11 +63,9 @@ describe("CategoryValidator Unit Tests", () => {
     });
 
     it("should invalidate when name is not a string", () => {
-      const category = new Category({
-        name: 123 as any,
-        description: "Desc",
-        is_active: true,
-      });
+      const category = CategoryDataBuilder.aCategory()
+        .withName(123 as any)
+        .build();
 
       const isValid = validator.validate(category);
 
@@ -84,11 +74,9 @@ describe("CategoryValidator Unit Tests", () => {
     });
 
     it("should invalidate when description is not a string", () => {
-      const category = new Category({
-        name: "Valid",
-        description: 123 as any,
-        is_active: true,
-      });
+      const category = CategoryDataBuilder.aCategory()
+        .withDescription(123 as any)
+        .build();
 
       const isValid = validator.validate(category);
 
@@ -97,23 +85,18 @@ describe("CategoryValidator Unit Tests", () => {
     });
 
     it("should allow description to be null", () => {
-      const category = new Category({
-        name: "Valid",
-        description: null,
-        is_active: true,
-      });
+      const category = CategoryDataBuilder.aCategory()
+        .withDescription(null)
+        .build();
 
       const isValid = validator.validate(category);
 
       expect(isValid).toBe(true);
     });
-
     it("should invalidate when is_active is not boolean", () => {
-      const category = new Category({
-        name: "Valid",
-        description: "Desc",
-        is_active: "true" as any,
-      });
+      const category = CategoryDataBuilder.aCategory().deactivate().build();
+
+      (category as any).is_active = "true";
 
       const isValid = validator.validate(category);
 
