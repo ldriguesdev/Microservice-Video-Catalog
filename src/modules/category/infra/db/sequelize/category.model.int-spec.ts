@@ -1,4 +1,4 @@
-import { Sequelize } from "sequelize-typescript";
+import { DataType, PrimaryKey, Sequelize } from "sequelize-typescript";
 import { CategoryModel } from "./category.model";
 import { CategoryDataBuilder } from "../../../domain/category-data-builder";
 
@@ -9,16 +9,17 @@ describe("CategoryModel Integration Test with DataBuilder", () => {
     sequelize = new Sequelize({
       dialect: "sqlite",
       storage: ":memory:",
-      // logging: false,
+      models: [CategoryModel],
+      logging: false,
     });
 
     sequelize.addModels([CategoryModel]);
     await sequelize.sync({ force: true });
   });
 
-beforeEach(async () => {
-  await sequelize.sync({ force: true });
-});
+  beforeEach(async () => {
+    await sequelize.sync({ force: true });
+  });
 
   afterAll(async () => {
     await sequelize.close();
@@ -71,6 +72,60 @@ beforeEach(async () => {
       expect(model.name).toBe(categories[index].name);
       expect(model.description).toBe(categories[index].description);
       expect(model.is_active).toBe(categories[index].is_active);
+    });
+  });
+
+  it("should map all model attributes correctly", () => {
+    const attributesMap = CategoryModel.getAttributes();
+    const attributes = Object.keys(CategoryModel.getAttributes());
+
+    const categoryIdAttribute = attributesMap.category_id;
+    const categoryNameAttribute = attributesMap.name;
+    const categoryDescriptionAttribute = attributesMap.description;
+    const categoryIsActiveAttribute = attributesMap.is_active;
+    const categoryCreatedAtAttribute = attributesMap.created_at;
+
+    expect(attributes).toStrictEqual([
+      "category_id",
+      "name",
+      "description",
+      "is_active",
+      "created_at",
+    ]);
+
+    expect(categoryIdAttribute).toMatchObject({
+      field: "category_id",
+      fieldName: "category_id",
+      primaryKey: true,
+      type: DataType.UUID(),
+    });
+
+    expect(categoryNameAttribute).toMatchObject({
+      field: "name",
+      fieldName: "name",
+      allowNull: false,
+      type: DataType.STRING(255),
+    });
+
+    expect(categoryDescriptionAttribute).toMatchObject({
+      field: "description",
+      fieldName: "description",
+      allowNull: true,
+      type: DataType.TEXT(),
+    });
+
+    expect(categoryIsActiveAttribute).toMatchObject({
+      field: "is_active",
+      fieldName: "is_active",
+      allowNull: false,
+      type: DataType.BOOLEAN(),
+    });
+
+    expect(categoryCreatedAtAttribute).toMatchObject({
+      field: "created_at",
+      fieldName: "created_at",
+      allowNull: false,
+      type: DataType.DATE(3),
     });
   });
 });
