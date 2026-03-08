@@ -1,18 +1,18 @@
 import { DataType, PrimaryKey, Sequelize } from "sequelize-typescript";
 import { CategoryModel } from "./category.model";
 import { CategoryDataBuilder } from "../../../domain/category-data-builder";
+import { Config } from "../../../../../shared/infra/config";
 
 describe("CategoryModel Integration Test with DataBuilder", () => {
   let sequelize: Sequelize;
 
   beforeAll(async () => {
-    sequelize = new Sequelize({
-      dialect: "sqlite",
-      storage: ":memory:",
-      models: [CategoryModel],
-      logging: false,
-    });
 
+    sequelize = new Sequelize({
+      dialect: Config.db().dialect,
+      host: Config.db().host,
+      logging: Config.db().logging,
+    });
     sequelize.addModels([CategoryModel]);
     await sequelize.sync({ force: true });
   });
