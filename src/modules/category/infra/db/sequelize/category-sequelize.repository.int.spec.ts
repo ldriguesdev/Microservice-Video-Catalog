@@ -4,7 +4,9 @@ import { CategorySequelizeRepository } from "./category-sequelize.repository";
 import { Category } from "../../../domain/category.entity";
 import { NotFoundError } from "../../../../../shared/domain/errors/not-found.error";
 import { Uuid } from "../../../../../shared/domain/value-object/uuid.value-object";
-import { CategorySearchParams } from "../../../domain/category.repository";
+import { CategorySearchParams, CategorySearchResult } from "../../../domain/category.repository";
+import { CategoryModelMapper } from "./category-model-mapper";
+import { create, last } from "lodash";
 
 describe("CategorySequelizeRepository Integration Test", () => {
   let sequelize: Sequelize;
@@ -158,6 +160,55 @@ describe("CategorySequelizeRepository Integration Test", () => {
       expect(result.items[1].category_id.id).toBe(category1.category_id.id);
     });
 
+    test("should apply pagination when other parameters is null", async () => {
+      const created_at = new Date();
+      const categories = Category.fake().theCategories(16)
+        .withCreatedAt(created_at)
+        .withName("Category")
+        .withDescription(null)
+        .build();
+
+      await repository.bulkInsert(categories);
+      const spyToEntity = jest.spyOn(CategoryModelMapper, "toEntity");
+      const searchOutput = await repository.search(new CategorySearchParams());
+
+      expect(searchOutput).toBeInstanceOf(CategorySearchResult)
+      expect(spyToEntity).toHaveBeenCalledTimes(15);
+      expect(searchOutput.toJSON()).toMatchObject({
+        total: 16,
+        current_page: 1,
+        per_page: 15,
+        last_page: 2,
+      });
+      searchOutput.items.forEach((item) => {
+        expect(item).toBeInstanceOf(Category);
+        expect(item.created_at).toEqual(created_at);
+        expect(item.category_id).toBeDefined()
+      });
+
+      const itens = searchOutput.items.map((i) => i.toJson());
+      expect(itens).toMatchObject(new Array(15).fill({
+        name: "Category",
+        description: null,
+        is_active: true,
+        created_at: created_at.toISOString(),
+      }));
+    });
+
+    test('should order by created_at descending when search params are null', async () => {
+      const created_at = new Date();
+      const categories = Category.fake().theCategories(16)
+        .withCreatedAt((i) => new Date(created_at.getTime() + i))
+        .withName("Category")
+        .withDescription(null)
+        .build();
+
+      const searchOutput = await repository.search(new CategorySearchParams());
+      searchOutput.items.reverse().forEach((item, index) => {
+        expect(item.created_at).toEqual(new Date(created_at.getTime() + index));
+      });
+    })
+
     test("should apply filter by name", async () => {
       const category1 = Category.fake().aCategory().withName("Action").build();
       const category2 = Category.fake().aCategory().withName("Horror").build();
@@ -169,6 +220,59 @@ describe("CategorySequelizeRepository Integration Test", () => {
       expect(result.total).toBe(1);
       expect(result.items[0].name).toBe("Action");
     });
+
+    test("should apply paginate and filter", async () => {
+      const categories =
+        [Category.fake()
+          .aCategory()
+          .withName("HaTe")
+          .withCreatedAt(new Date(new Date().getTime() + 5000))
+          .build(),
+        Category.fake()
+          .aCategory()
+          .withName("HATE")
+          .withCreatedAt(new Date(new Date().getTime() + 4000))
+          .build(),
+        Category.fake()
+          .aCategory()
+          .withName("Hate")
+          .withCreatedAt(new Date(new Date().getTime() + 3000))
+          .build(),
+        Category.fake()
+          .aCategory()
+          .withName("a")
+          .withCreatedAt(new Date(new Date().getTime() + 2000))
+          .build(),
+        Category.fake()
+          .aCategory()
+          .withName("A")
+          .withCreatedAt(new Date(new Date().getTime() + 1000))
+          .build(),
+        ]
+
+      await repository.bulkInsert(categories);
+
+      let searchOutput = await repository.search(new CategorySearchParams({ filter: "Hate", page: 1, per_page: 2 }))
+      expect(searchOutput.toJSON()).toMatchObject({
+        total: 3,
+        current_page: 1,
+        per_page: 2,
+        last_page: 2,
+      });
+      expect(searchOutput.items).toHaveLength(2);
+      expect(searchOutput.items[0].name).toBe("HaTe");
+      expect(searchOutput.items[1].name).toBe("HATE");
+
+      searchOutput = await repository.search(new CategorySearchParams({ filter: "Hate", page: 2, per_page: 2 }))
+      expect(searchOutput.toJSON()).toMatchObject({
+        total: 3,
+        current_page: 2,
+        per_page: 2,
+        last_page: 2,
+      });
+      expect(searchOutput.items).toHaveLength(1);
+      expect(searchOutput.items[0].name).toBe("Hate");
+    })
 
     test("should apply pagination", async () => {
       const categories = [
