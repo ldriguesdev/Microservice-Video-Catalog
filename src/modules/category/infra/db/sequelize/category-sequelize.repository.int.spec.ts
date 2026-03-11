@@ -7,29 +7,16 @@ import { Uuid } from "../../../../../shared/domain/value-object/uuid.value-objec
 import { CategorySearchParams, CategorySearchResult } from "../../../domain/category.repository";
 import { CategoryModelMapper } from "./category-model-mapper";
 import { create, last } from "lodash";
+import { setupSequelize } from "../../../../../shared/infra/testing/helpers";
 
 describe("CategorySequelizeRepository Integration Test", () => {
-  let sequelize: Sequelize;
   let repository: CategorySequelizeRepository;
 
+
+  setupSequelize({ models: [CategoryModel] });
+
   beforeAll(async () => {
-    sequelize = new Sequelize({
-      dialect: "sqlite",
-      storage: ":memory:",
-      models: [CategoryModel],
-      logging: false,
-    });
-
-    await sequelize.sync({ force: true });
     repository = new CategorySequelizeRepository(CategoryModel);
-  });
-
-  beforeEach(async () => {
-    await sequelize.sync({ force: true });
-  });
-
-  afterAll(async () => {
-    await sequelize.close();
   });
 
   test("should insert a new category", async () => {
@@ -194,6 +181,7 @@ describe("CategorySequelizeRepository Integration Test", () => {
         created_at: created_at.toISOString(),
       }));
     });
+
 
     test('should order by created_at descending when search params are null', async () => {
       const created_at = new Date();
