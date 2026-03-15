@@ -1,7 +1,5 @@
-import { id } from "../../../../jest.config";
 import { Uuid } from "../../../shared/domain/value-object/uuid.value-object";
 import { setupSequelize } from "../../../shared/infra/testing/helpers";
-import { CategoryInMemoryRepository } from "../infra/db/in-memory/category-in-memory.repository";
 import { CategorySequelizeRepository } from "../infra/db/sequelize/category-sequelize.repository";
 import { CategoryModel } from "../infra/db/sequelize/category.model";
 import { CreateCategoryUseCase } from "./create-category.use-case";
