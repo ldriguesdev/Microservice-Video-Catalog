@@ -5,10 +5,10 @@ import { Category } from "../domain/category.entity";
 import { ICategoryRepository } from "../domain/category.repository";
 import { CategoryOutput, CategoryOutputMapper } from "./common/category.output";
 
-export class UpdateCategoryUseCase implements IUseCase<UpdateCategoryInput, UpdateCategoryOutput> {
+export class GetCategoryUseCase implements IUseCase<GetCategoryInput, GetCategoryOutput> {
   constructor(private categoryRepository: ICategoryRepository) { }
 
-  async execute(input: UpdateCategoryInput): Promise<UpdateCategoryOutput> {
+  async execute(input: GetCategoryInput): Promise<GetCategoryOutput> {
     const uuid = new Uuid(input.id);
     const category = await this.categoryRepository.findById(uuid);
 
@@ -16,21 +16,12 @@ export class UpdateCategoryUseCase implements IUseCase<UpdateCategoryInput, Upda
       throw new NotFoundError(input.id, Category);
     }
 
-    input.name && category.changeName(input.name);
-    input.description !== undefined && category.changeDescription(input.description);
-    input.is_active !== undefined && (input.is_active ? category.activate() : category.deactivate());
-
-    await this.categoryRepository.update(category);
-
     return CategoryOutputMapper.toOutput(category);
   }
 }
 
-export type UpdateCategoryInput = {
+export type GetCategoryInput = {
   id: string;
-  name?: string;
-  description?: string;
-  is_active?: boolean;
 }
 
-export type UpdateCategoryOutput = CategoryOutput
+export type GetCategoryOutput = CategoryOutput

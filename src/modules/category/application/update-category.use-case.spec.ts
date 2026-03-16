@@ -35,6 +35,7 @@ describe('UpdateCategoryUseCase Integration Test', () => {
     expect(output).toStrictEqual({
       id: entity.category_id.id,
       name: 'Movie Updated',
+      description: entity.description,
       is_active: true,
       created_at: entity.created_at,
     })
@@ -46,6 +47,7 @@ describe('UpdateCategoryUseCase Integration Test', () => {
     expect(output).toStrictEqual({
       id: entity.category_id.id,
       name: 'Movie Updated',
+      description: 'some description',
       is_active: false,
       created_at: entity.created_at,
     })
@@ -57,6 +59,7 @@ describe('UpdateCategoryUseCase Integration Test', () => {
     expect(output).toStrictEqual({
       id: entity.category_id.id,
       name: 'Movie Updated',
+      description: 'some description',
       is_active: false,
       created_at: entity.created_at,
     })
@@ -68,6 +71,7 @@ describe('UpdateCategoryUseCase Integration Test', () => {
     expect(output).toStrictEqual({
       id: entity.category_id.id,
       name: 'Movie Updated',
+      description: 'some description',
       is_active: true,
       created_at: entity.created_at,
     })

@@ -7,7 +7,7 @@ import { ICategoryRepository } from "../domain/category.repository";
 export class DeleteCategoryUseCase implements IUseCase<DeleteCategoryInput, DeleteCategoryOutput> {
   constructor(private categoryRepository: ICategoryRepository) { }
 
-  async execute(input: DeleteCategoryInput): Promise<void> {
+  async execute(input: DeleteCategoryInput): Promise<DeleteCategoryOutput> {
     const uuid = new Uuid(input.id);
     const category = await this.categoryRepository.findById(uuid);
 
