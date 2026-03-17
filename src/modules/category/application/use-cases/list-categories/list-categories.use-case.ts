@@ -1,10 +1,11 @@
-import { PaginationOutput, PaginationOutputMapper } from "../../../shared/application/pagination-output"
-import { IUseCase } from "../../../shared/application/use-case.interface";
-import { SortDirection } from "../../../shared/domain/repository/search-params";
-import { CategoryFilter, CategorySearchParams, CategorySearchResult, ICategoryRepository } from "../domain/category.repository";
-import { CategoryOutput, CategoryOutputMapper } from "./common/category.output"
+import { PaginationOutputMapper, PaginationOutput } from "../../../../../shared/application/pagination-output"
+import { IUseCase } from "../../../../../shared/application/use-case.interface"
+import { SortDirection } from "../../../../../shared/domain/repository/search-params"
+import { CategoryFilter, CategorySearchParams, CategorySearchResult, ICategoryRepository } from "../../../domain/category.repository"
+import { CategoryOutputMapper, CategoryOutput } from "../common/category.output"
 
-export class ListCategoryUseCase implements IUseCase<ListCategoryInput, ListCategoryOutput> {
+
+export class ListCategoriesUseCase implements IUseCase<ListCategoryInput, ListCategoryOutput> {
   constructor(private categoryRepository: ICategoryRepository) { }
 
   async execute(input: ListCategoryInput): Promise<ListCategoryOutput> {
@@ -13,7 +14,6 @@ export class ListCategoryUseCase implements IUseCase<ListCategoryInput, ListCate
 
     return this.toOutput(searchResult)
   }
-
 
   private toOutput(searchResult: CategorySearchResult): ListCategoryOutput {
     const { items: _items } = searchResult

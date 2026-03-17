@@ -1,5 +1,5 @@
-import { Uuid } from "../../../shared/domain/value-object/uuid.value-object";
-import { Category } from "./category.entity";
+import { Uuid } from "../../../../shared/domain/value-object/uuid.value-object";
+import { Category } from "../category.entity";
 
 describe('Category Entity', () => {
   let spy: any

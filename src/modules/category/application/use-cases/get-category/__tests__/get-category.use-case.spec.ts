@@ -1,20 +1,17 @@
-import { NotFoundError } from "../../../shared/domain/errors/not-found.error";
-import { InvalidUuidError, Uuid } from "../../../shared/domain/value-object/uuid.value-object";
-import { CategoryDataBuilder } from "../domain/category-data-builder";
-import { Category } from "../domain/category.entity";
-import { GetCategoryUseCase } from "./get-category.use-case";
-import { CategorySequelizeRepository } from "../infra/db/sequelize/category-sequelize.repository";
-import { setupSequelize } from "../../../shared/infra/testing/helpers";
-import { CategoryModel } from "../infra/db/sequelize/category.model";
+import { NotFoundError } from "../../../../../../shared/domain/errors/not-found.error";
+import { InvalidUuidError, Uuid } from "../../../../../../shared/domain/value-object/uuid.value-object";
+import { CategoryDataBuilder } from "../../../../domain/category-data-builder";
+import { Category } from "../../../../domain/category.entity";
+import { CategoryInMemoryRepository } from "../../../../infra/db/in-memory/category-in-memory.repository";
+import { GetCategoryUseCase } from "../get-category.use-case";
 
-describe('GetCategoryUseCase Integration Test', () => {
-  let useCase: GetCategoryUseCase
-  let repository: CategorySequelizeRepository
 
-  setupSequelize({ models: [CategoryModel] });
+describe('GetCategoryUseCase Test Unit', () => {
+  let useCase: GetCategoryUseCase;
+  let repository: CategoryInMemoryRepository
 
   beforeEach(() => {
-    repository = new CategorySequelizeRepository(CategoryModel);
+    repository = new CategoryInMemoryRepository();
     useCase = new GetCategoryUseCase(repository);
   })
 
@@ -42,4 +39,5 @@ describe('GetCategoryUseCase Integration Test', () => {
       created_at: category.created_at,
     })
   })
+
 })

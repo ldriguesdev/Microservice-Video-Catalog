@@ -1,6 +1,7 @@
-import { Category } from "./category.entity";
-import { Uuid } from "../../../shared/domain/value-object/uuid.value-object";
-import { CategoryDataBuilder } from "./category-data-builder";
+import { Uuid } from "../../../../shared/domain/value-object/uuid.value-object";
+import { CategoryDataBuilder } from "../category-data-builder";
+import { Category } from "../category.entity";
+
 
 describe("CategoryDataBuilder Unit Tests", () => {
   describe("aCategory()", () => {

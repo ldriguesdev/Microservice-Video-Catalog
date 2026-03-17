@@ -1,9 +1,5 @@
-import {
-  CategoryRules,
-  CategoryValidator,
-  CategoryValidatorFactory,
-} from "./category.validator";
-import { CategoryDataBuilder } from "./category-data-builder";
+import { CategoryDataBuilder } from "../category-data-builder";
+import { CategoryRules, CategoryValidator, CategoryValidatorFactory } from "../category.validator";
 
 describe("CategoryValidator Unit Tests", () => {
   describe("CategoryRules", () => {

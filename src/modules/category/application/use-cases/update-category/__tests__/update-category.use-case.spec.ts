@@ -1,9 +1,8 @@
-import { Not } from "sequelize-typescript";
-import { InvalidUuidError, Uuid } from "../../../shared/domain/value-object/uuid.value-object";
-import { CategoryInMemoryRepository } from "../infra/db/in-memory/category-in-memory.repository";
-import { UpdateCategoryUseCase } from "./update-category.use-case";
-import { NotFoundError } from "../../../shared/domain/errors/not-found.error";
-import { Category } from "../domain/category.entity";
+import { InvalidUuidError, Uuid } from "../../../../../../shared/domain/value-object/uuid.value-object";
+import { CategoryInMemoryRepository } from "../../../../infra/db/in-memory/category-in-memory.repository";
+import { NotFoundError } from "../../../../../../shared/domain/errors/not-found.error";
+import { Category } from "../../../../domain/category.entity";
+import { UpdateCategoryUseCase } from "../update-category.use-case";
 
 describe('UpdateCategoryUseCase Integration Test', () => {
   let useCase: UpdateCategoryUseCase;
