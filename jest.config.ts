@@ -16,7 +16,7 @@ const config: Config = {
   // cacheDirectory: "/tmp/jest_rs",
 
   // Automatically clear mock calls, instances, contexts and results before every test
-  clearMocks: true,
+  //clearMocks: true,
 
   // Indicates whether the coverage information should be collected while executing the test
   // collectCoverage: false,
@@ -33,7 +33,7 @@ const config: Config = {
   // ],
 
   // Indicates which provider should be used to instrument code for coverage
-  coverageProvider: "v8",
+  //coverageProvider: 'v8',
 
   // A list of reporter names that Jest uses when writing coverage reports
   // coverageReporters: [
@@ -84,8 +84,6 @@ const config: Config = {
   //   "cjs",
   //   "jsx",
   //   "ts",
-  //   "mts",
-  //   "cts",
   //   "tsx",
   //   "json",
   //   "node"
@@ -125,11 +123,12 @@ const config: Config = {
   // restoreMocks: false,
 
   // The root directory that Jest should scan for tests and modules within
-  rootDir: './src',
+  //rootDir: './src',
 
   // A list of paths to directories that Jest should use to search for files in
-  // roots: ["<rootDir>/src"],
-
+  // roots: [
+  //   "<rootDir>"
+  // ],
 
   // Allows you to use a custom runner instead of Jest's default test runner
   // runner: "jest-runner",
@@ -138,7 +137,7 @@ const config: Config = {
   // setupFiles: [],
 
   // A list of paths to modules that run some code to configure or set up the testing framework before each test
-  // setupFilesAfterEnv: [],
+  //setupFilesAfterEnv: ['./core/shared/infra/testing/expect-helpers.ts'],
 
   // The number of seconds after which a test is considered as slow and reported as such in the results.
   // slowTestThreshold: 5,
@@ -157,15 +156,10 @@ const config: Config = {
 
   // The glob patterns Jest uses to detect test files
   // testMatch: [
-  //   "**/__tests__/**/*.?([mc])[jt]s?(x)",
-  //   "**/?(*.)+(spec|test).?([mc])[jt]s?(x)"
+  //   "**/__tests__/**/*.[jt]s?(x)",
+  //   "**/?(*.)+(spec|test).[tj]s?(x)"
   // ],
 
-
-  testMatch: [
-  '**/*.spec.ts',
-  '**/*.int-spec.ts'
-],
   // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
   // testPathIgnorePatterns: [
   //   "/node_modules/"
@@ -181,18 +175,11 @@ const config: Config = {
   // testRunner: "jest-circus/runner",
 
   // A map from regular expressions to paths to transformers
-  transform: {
-    "^.+\\.(t|j)sx?$": "@swc/jest"
-  },
+  // transform: {
+  //   '^.+\\.(t|j)sx?$': '@swc/jest',
+  // },
 
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
-  transformIgnorePatterns: [
-    "node_modules/(?!(uuid)/)"
-  ],
-
-  setupFilesAfterEnv: [
-    './shared/infra/testing/expect-helpers.ts'
-  ]
 
 
   // An array of regexp pattern strings that are matched against all modules before the module loader will automatically return a mock for them
@@ -206,6 +193,41 @@ const config: Config = {
 
   // Whether to use watchman for file crawling
   // watchman: true,
+
+  moduleFileExtensions: ['js', 'json', 'ts'],
+  rootDir: 'src',
+  testRegex: '.*\\..*spec\\.ts$',
+  transform: {
+    '^.+\\.(t|j)s$': '@swc/jest',
+  },
+  collectCoverageFrom: ['**/*.(t|j)s'],
+  coverageDirectory: '../coverage',
+  coveragePathIgnorePatterns: [
+    '/node_modules/',
+    '.interface.ts',
+    '-interface.ts',
+    'shared/testing',
+    'shared-module/testing',
+    'validator-rules.ts',
+    '-fixture.ts',
+    '.input.ts',
+    '.d.ts',
+  ],
+  coverageThreshold: {
+    global: {
+      statements: 80,
+      branches: 80,
+      functions: 80,
+      lines: 80,
+    },
+  },
+  testEnvironment: 'node',
+  setupFilesAfterEnv: ['./core/shared/infra/testing/expect-helpers.ts'],
+  coverageProvider: 'v8',
+  clearMocks: true,
+  transformIgnorePatterns: [
+    "node_modules/(?!(uuid)/)"
+  ],
 };
 
-export = config;
+export default config;
