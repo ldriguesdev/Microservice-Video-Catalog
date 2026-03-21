@@ -7,7 +7,7 @@ export class Config {
   static db() {
     Config.readEnv()
     return {
-      dialect: Config.env.DB_DIALECT,
+      dialect: Config.env.DB_VENDOR,
       host: Config.env.DB_HOST,
       logging: Config.env.DB_LOGGING === "true",
     }

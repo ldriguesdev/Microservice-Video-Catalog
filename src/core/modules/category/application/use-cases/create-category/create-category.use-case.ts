@@ -1,7 +1,6 @@
 import { IUseCase } from "../../../../../shared/application/use-case.interface";
 import { Category } from "../../../domain/category.entity";
 import { ICategoryRepository } from "../../../domain/category.repository";
-import { CategoryModelMapper } from "../../../infra/db/sequelize/category-model-mapper";
 import { CategoryOutput, CategoryOutputMapper } from "../common/category.output";
 
 export class CreateCategoryUseCase implements IUseCase<CreateCategoryInput, CreateCategoryOutput> {
