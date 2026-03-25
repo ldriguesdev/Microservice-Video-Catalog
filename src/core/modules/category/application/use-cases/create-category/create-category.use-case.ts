@@ -16,7 +16,7 @@ export class CreateCategoryUseCase implements IUseCase<CreateCategoryInput, Crea
 
 export type CreateCategoryInput = {
   name: string;
-  description?: string;
+  description?: string | null;
   is_active?: boolean;
 };
 
