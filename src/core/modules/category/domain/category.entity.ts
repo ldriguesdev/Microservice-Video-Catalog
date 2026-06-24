@@ -1,6 +1,5 @@
 import { Entity } from "../../../shared/domain/entity";
 import { Notification } from "../../../shared/domain/validators/notification";
-import { EntityValidationError } from "../../../shared/domain/validators/validation.error";
 import { Uuid } from "../../../shared/domain/value-object/uuid.value-object";
 import { ValueObject } from "../../../shared/domain/value-object/value-object";
 import { CategoryDataBuilder } from "./category-data-builder";
